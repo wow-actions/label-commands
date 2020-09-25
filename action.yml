@@ -1,5 +1,5 @@
-name: Needs More Info
-description: Request more info from PRs/Issues with either the default title or a blank body.
+name: Label Actions
+description: Perform actions when issues or pull requests are labeled or unlabeled.
 author: bubkoo <bubkoo.wy@gmail.com>
 inputs:
   GITHUB_TOKEN:

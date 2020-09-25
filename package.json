@@ -6,6 +6,10 @@
   "repository": "https://github.com/bubkoo/label-actions",
   "author": "bubkoo <bubkoo.wy@gmail.com>",
   "license": "MIT",
+  "files": [
+    "dist",
+    "action.yml"
+  ],
   "scripts": {
     "clean": "rimraf dist",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
