@@ -1,0 +1,16 @@
+name: Needs More Info
+description: Request more info from PRs/Issues with either the default title or a blank body.
+author: bubkoo <bubkoo.wy@gmail.com>
+inputs:
+  GITHUB_TOKEN:
+    description: Your GitHub token for authentication
+    required: true
+  CONFIG_FILE:
+    description: Config file path relative to your repo's root.
+    required: false
+runs:
+  using: node12
+  main: dist/index.js
+branding:
+  icon: alert-triangle
+  color: green

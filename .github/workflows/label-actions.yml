@@ -1,0 +1,21 @@
+name: Label Actions
+on:
+  pull_request:
+    types: [labeled, unlabeled]
+  issues:
+    types: [labeled, unlabeled]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 🚧　Install
+        run: |
+          yarn
+      - name: 📦　Build
+        run: |
+          yarn build
+      - uses: ./
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG_FILE: .github/label-actions.yml
