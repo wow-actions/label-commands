@@ -24,9 +24,9 @@ export namespace Action {
         )}`,
       )
 
-      core.info(JSON.stringify(context, null, 2))
+      // core.info(JSON.stringify(context, null, 2))
 
-      let label = context.payload.label as string
+      let label = context.payload.label.name as string
       if (context.payload.action === 'unlabeled') {
         label = `-${label}`
       }
