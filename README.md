@@ -18,7 +18,7 @@ This Github Action performs certain commands when an issue or pull request is la
 Create `.github/workflows/label-commands.yml` in the default branch:
 
 ```yaml
-name: Label Actions
+name: Label Commands
 on:
   pull_request:
     types: [labeled, unlabeled]
