@@ -16,15 +16,15 @@ export namespace Action {
       const octokit = Util.getOctokit()
       const config = await Config.get(octokit, configPath)
 
-      core.info(
-        `Load config from "${configPath}": \n${JSON.stringify(
-          config,
-          null,
-          2,
-        )}`,
-      )
-
-      // core.info(JSON.stringify(context, null, 2))
+      if (configPath) {
+        core.debug(
+          `Load config from "${configPath}": \n${JSON.stringify(
+            config,
+            null,
+            2,
+          )}`,
+        )
+      }
 
       let label = context.payload.label.name as string
       if (context.payload.action === 'unlabeled') {
@@ -36,6 +36,9 @@ export namespace Action {
         context.payload.issue != null ? 'issues' : 'pulls',
         label,
       )
+
+      core.debug(`Label: ${context.payload.label.name}`)
+      core.debug(`Actions: ${JSON.stringify(actions, null, 2)}`)
 
       const payload = context.payload.issue || context.payload.pull_request
       if (payload) {
