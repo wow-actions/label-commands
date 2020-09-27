@@ -1,9 +1,9 @@
 {
-  "name": "label-actions",
-  "description": "Perform actions when issues or pull requests are labeled or unlabeled.",
+  "name": "label-commands",
+  "description": "Perform commands when issues or pull requests are labeled or unlabeled.",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "repository": "https://github.com/bubkoo/label-actions",
+  "repository": "https://github.com/bubkoo/label-commands",
   "author": "bubkoo <bubkoo.wy@gmail.com>",
   "license": "MIT",
   "files": [

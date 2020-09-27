@@ -1,6 +1,6 @@
 import * as github from '@actions/github'
-import merge from 'lodash.merge'
 import yaml from 'js-yaml'
+import merge from 'lodash.merge'
 import { Util } from './util'
 
 export namespace Config {
@@ -11,6 +11,7 @@ export namespace Config {
     unlock?: boolean
     lockReason?: string
     comment?: string | string[]
+    labels?: string | string[]
   }
 
   interface Definition {

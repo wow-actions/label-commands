@@ -1,20 +1,21 @@
-# Label Actions
+# Label Commands
 
-> Github action to perform actions when issues or pull requests are labeled or unlabeled.
+> Github action to perform commands when issues or pull requests are labeled or unlabeled.
 
 ## How It Works
 
-This Github Action performs certain actions when an issue or pull request is labeled or unlabeled. The following actions are supported:
+This Github Action performs certain commands when an issue or pull request is labeled or unlabeled. The following commands are supported:
 
 - Post a comment (`comment` option)
 - Close (`close` option)
 - Reopen (`open` option)
 - Lock with an optional lock reason (`lock` and `lockReason` options)
 - Unlock (`unlock` option)
+- Add or remove labels (`labels` option), label prefixed with `-` will be removed, other label will be added.
 
 ## Usage
 
-Create `.github/workflows/label-actions.yml` in the default branch:
+Create `.github/workflows/label-commands.yml` in the default branch:
 
 ```yaml
 name: Label Actions
@@ -27,13 +28,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: bubkoo/label-actions@v1
+      - uses: bubkoo/label-commands@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG_FILE: .github/label-actions.yml
+          CONFIG_FILE: config-file-path
 ```
 
-And the default config is:
+### Options
+
+- `GITHUB_TOKEN`: Your GitHub token for authentication.
+- `CONFIG_FILE`: Path to configuration file. Custom config will [deep merged](https://lodash.com/docs/4.17.15#merge) with the following default config:
 
 ```yml
 # Specify actions for issues and pull requests

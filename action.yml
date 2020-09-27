@@ -1,5 +1,5 @@
-name: Label Actions
-description: Perform actions when issues or pull requests are labeled or unlabeled.
+name: Label Commands
+description: Perform commands when issues or pull requests are labeled or unlabeled.
 author: bubkoo <bubkoo.wy@gmail.com>
 inputs:
   GITHUB_TOKEN:
@@ -12,5 +12,5 @@ runs:
   using: node12
   main: dist/index.js
 branding:
-  icon: alert-triangle
-  color: green
+  icon: command
+  color: green # gray-dark purple red orange green blue yellow black white

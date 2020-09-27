@@ -42,7 +42,15 @@ export namespace Action {
 
       const payload = context.payload.issue || context.payload.pull_request
       if (payload) {
-        const { comment, open, close, lock, unlock, lockReason } = actions
+        const {
+          comment,
+          open,
+          close,
+          lock,
+          unlock,
+          lockReason,
+          labels,
+        } = actions
         const params = { ...context.repo, issue_number: payload.number }
 
         if (comment) {
@@ -69,6 +77,35 @@ export namespace Action {
 
         if (unlock && payload.locked) {
           await octokit.issues.unlock({ ...params })
+        }
+
+        if (labels) {
+          const labelsToAdd: string[] = []
+          const labelsToRemove: string[] = []
+
+          if (Array.isArray(labels)) {
+            labels.forEach((label) => {
+              if (label.startsWith('-')) {
+                labelsToRemove.push(label.substr(1))
+              } else {
+                labelsToAdd.push(label)
+              }
+            })
+          } else {
+            if (labels.startsWith('-')) {
+              labelsToRemove.push(labels.substr(1))
+            } else {
+              labelsToAdd.push(labels)
+            }
+          }
+
+          if (labelsToAdd.length) {
+            octokit.issues.addLabels({ ...params, labels: labelsToAdd })
+          }
+
+          labelsToRemove.forEach((name) => {
+            octokit.issues.removeLabel({ ...params, name })
+          })
         }
       }
     }
