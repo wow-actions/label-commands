@@ -1,4 +1,4 @@
-name: Label Actions
+name: Label Commands
 on:
   issues:
     types: [labeled, unlabeled]
@@ -19,4 +19,4 @@ jobs:
       - uses: ./
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG_FILE: .github/label-actions.yml
+          CONFIG_FILE: .github/label-commands.yml
