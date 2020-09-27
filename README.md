@@ -84,3 +84,7 @@ issues:
 # Optionally, specify configuration settings just for pull requests
 pulls:
 ```
+
+## License
+
+The scripts and documentation in this project are released under the [MIT License](LICENSE)
