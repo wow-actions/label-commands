@@ -25,7 +25,6 @@ export namespace Config {
     common: {
       heated: {
         comment: `The thread has been temporarily locked.\nPlease follow our community guidelines.`,
-        reactions: ['eyes', 'heart'],
         lock: true,
         lockReason: 'too heated',
       },

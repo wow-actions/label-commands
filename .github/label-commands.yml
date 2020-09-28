@@ -2,9 +2,10 @@ common:
   heated:
     lock: true
     lockReason: too heated
+    reactions: ['eyes', 'heart']
     comment: >
       The thread has been temporarily locked.
-      
+
       Please follow our community guidelines.
 
 
@@ -25,7 +26,7 @@ issues:
     close: true
     comment: >
       为了能够进行高效沟通，我们对 issue 有一定的格式要求，你的 issue 因为无复现步骤或可复现仓库而被自动关闭，提供之后会被 REOPEN。
-      
+
       In order to communicate effectively, we have a certain format requirement for the issue, your issue is automatically closed because there is no recurring step or reproducible warehouse, and will be REOPEN after the offer.
 
 
