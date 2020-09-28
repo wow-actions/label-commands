@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { Util } from './util'
 import { Config } from './config'
+import { Reaction } from './reaction'
 
 export namespace Action {
   export async function run() {
@@ -45,6 +46,7 @@ export namespace Action {
         if (payload) {
           const {
             comment,
+            reactions,
             open,
             close,
             lock,
@@ -59,8 +61,15 @@ export namespace Action {
               author: payload.user.login,
             })
 
-            await Util.ensureUnlock(octokit, context, () => {
-              octokit.issues.createComment({ ...params, body })
+            await Util.ensureUnlock(octokit, context, async () => {
+              const { data } = await octokit.issues.createComment({
+                ...params,
+                body,
+              })
+
+              if (reactions) {
+                Reaction.add(octokit, data.id, reactions)
+              }
             })
           }
 

@@ -11,6 +11,7 @@ export namespace Config {
     unlock?: boolean
     lockReason?: string
     comment?: string | string[]
+    reactions?: string | string[]
     labels?: string | string[]
   }
 
@@ -24,6 +25,7 @@ export namespace Config {
     common: {
       heated: {
         comment: `The thread has been temporarily locked.\nPlease follow our community guidelines.`,
+        reactions: ['eyes', 'heart'],
         lock: true,
         lockReason: 'too heated',
       },

@@ -6,7 +6,7 @@
 
 This Github Action performs certain commands when an issue or pull request is labeled or unlabeled. The following commands are supported:
 
-- Post a comment (`comment` option)
+- Post a comment (`comment` and `reactions` option)
 - Close (`close` option)
 - Reopen (`open` option)
 - Lock with an optional lock reason (`lock` and `lockReason` options)
@@ -48,6 +48,8 @@ common:
     lock: true
     # Set a lock reason, such as `off-topic`, `too heated`, `resolved` or `spam`
     lockReason: too heated
+    # Reactions to be added to comment
+    reactions: ['eyes', 'heart']
     # Post a comment
     comment: >
       The thread has been temporarily locked.
