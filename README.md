@@ -67,9 +67,9 @@ issues:
   feature:
     # Close the issue
     close: true
-    # Post a comment, `${author}` is an optional placeholder
+    # Post a comment, `{{ author }}` is an optional placeholder
     comment: >
-      :wave: @${author}, please use our idea board to request new features.
+      :wave: @{{ author }}, please use our idea board to request new features.
 
 
   -wontfix:

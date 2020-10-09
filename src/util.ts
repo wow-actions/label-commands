@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { Context } from '@actions/github/lib/context'
+import mustache from 'mustache'
 import random from 'lodash.random'
-import template from 'lodash.template'
 
 export namespace Util {
   export function getOctokit() {
@@ -22,7 +22,7 @@ export namespace Util {
       result = comment[pos] || comment[0]
     }
 
-    return args ? template(result)(args) : result
+    return args ? mustache.render(result, args) : result
   }
 
   export function isValidEvent(event: string, action?: string) {
