@@ -2,7 +2,6 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { Util } from './util'
 import { Config } from './config'
-import { Reaction } from './reaction'
 
 export namespace Action {
   export async function run() {
@@ -53,23 +52,22 @@ export namespace Action {
             unlock,
             lockReason,
             labels,
+            pin,
+            unpin,
           } = actions
           const params = { ...context.repo, issue_number: payload.number }
 
+          if (pin) {
+            await Util.pin(octokit, true)
+          }
+
+          if (unpin) {
+            await Util.pin(octokit, false)
+          }
+
           if (comment) {
-            const body = Util.pickComment(comment, {
+            await Util.comment(octokit, comment, reactions, {
               author: payload.user.login,
-            })
-
-            await Util.ensureUnlock(octokit, context, async () => {
-              const { data } = await octokit.issues.createComment({
-                ...params,
-                body,
-              })
-
-              if (reactions) {
-                Reaction.add(octokit, data.id, reactions)
-              }
             })
           }
 
@@ -82,7 +80,10 @@ export namespace Action {
           }
 
           if (lock && !payload.locked) {
-            await Util.lockIssue(octokit, context, lockReason)
+            await octokit.issues.lock({
+              ...params,
+              lock_reason: lockReason,
+            })
           }
 
           if (unlock && payload.locked) {
@@ -90,32 +91,7 @@ export namespace Action {
           }
 
           if (labels) {
-            const labelsToAdd: string[] = []
-            const labelsToRemove: string[] = []
-
-            if (Array.isArray(labels)) {
-              labels.forEach((label) => {
-                if (label.startsWith('-')) {
-                  labelsToRemove.push(label.substr(1))
-                } else {
-                  labelsToAdd.push(label)
-                }
-              })
-            } else {
-              if (labels.startsWith('-')) {
-                labelsToRemove.push(labels.substr(1))
-              } else {
-                labelsToAdd.push(labels)
-              }
-            }
-
-            if (labelsToAdd.length) {
-              octokit.issues.addLabels({ ...params, labels: labelsToAdd })
-            }
-
-            labelsToRemove.forEach((name) => {
-              octokit.issues.removeLabel({ ...params, name })
-            })
+            await Util.label(octokit, labels)
           }
         }
       }

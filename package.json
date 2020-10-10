@@ -1,7 +1,7 @@
 {
   "name": "label-commands",
   "description": "Perform commands when issues or pull requests are labeled or unlabeled.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "dist/index.js",
   "repository": "https://github.com/bubkoo/label-commands",
   "author": "bubkoo <bubkoo.wy@gmail.com>",

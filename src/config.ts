@@ -4,52 +4,61 @@ import merge from 'lodash.merge'
 import { Util } from './util'
 
 export namespace Config {
+  export type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam'
+
   interface Actions {
     close?: boolean
     open?: boolean
     lock?: boolean
     unlock?: boolean
-    lockReason?: string
+    lockReason?: LockReason
+    pin?: boolean
+    unpin?: boolean
     comment?: string | string[]
     reactions?: string | string[]
     labels?: string | string[]
   }
 
-  interface Definition {
-    common?: { [label: string]: Actions }
-    issues?: { [label: string]: Actions }
-    pulls?: { [label: string]: Actions }
+  interface Strict {
+    [command: string]: Actions
   }
 
+  interface Loose {
+    issues?: Strict
+    pulls?: Strict
+  }
+
+  type Definition = Strict & Loose
+
   const defaults: Definition = {
-    common: {
-      heated: {
-        comment: `The thread has been temporarily locked.\nPlease follow our community guidelines.`,
-        lock: true,
-        lockReason: 'too heated',
-      },
-      '-heated': {
-        unlock: true,
-      },
+    heated: {
+      comment: `The thread has been temporarily locked.\nPlease follow our community guidelines.`,
+      lock: true,
+      lockReason: 'too heated',
     },
+    '-heated': {
+      unlock: true,
+    },
+
     issues: {
       feature: {
         close: true,
         comment:
-          ':wave: ${ author }, please use our idea board to request new features.',
+          ':wave: @{{ author }}, please use our idea board to request new features.',
       },
       '-wontfix': {
         open: true,
       },
       'needs-more-info': {
         comment:
-          'Hello ${author} \nIn order to communicate effectively, we have a certain format requirement for the issue, your issue is automatically closed because there is no recurring step or reproducible warehouse, and will be REOPEN after the offer.',
+          'Hello @{{ author }} \nIn order to communicate effectively, we have a certain format requirement for the issue, your issue is automatically closed because there is no recurring step or reproducible warehouse, and will be REOPEN after the offer.',
         close: true,
       },
       '-needs-more-info': {
         open: true,
       },
-    },
+    } as Strict,
+
     pulls: {},
   }
 
@@ -80,17 +89,12 @@ export namespace Config {
     config: Definition,
     type: 'issues' | 'pulls',
     label: string,
-  ): Actions {
+  ) {
     const section = config[type]
     if (section && section[label]) {
       return section[label]
     }
 
-    const common = config.common
-    if (common) {
-      return common[label] || {}
-    }
-
-    return {}
+    return config[label] || {}
   }
 }

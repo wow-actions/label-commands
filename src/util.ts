@@ -1,8 +1,9 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import { Context } from '@actions/github/lib/context'
 import mustache from 'mustache'
 import random from 'lodash.random'
+import { Config } from './config'
+import { Reaction } from './reaction'
 
 export namespace Util {
   export function getOctokit() {
@@ -51,40 +52,115 @@ export namespace Util {
     }
   }
 
-  export async function lockIssue(
-    octokit: ReturnType<typeof getOctokit>,
-    context: Context,
-    lockReason?: string,
-  ): Promise<any> {
-    const payload = context.payload.issue || context.payload.pull_request
-    if (payload) {
-      const params = { ...context.repo, issue_number: payload.number }
-      return lockReason
-        ? octokit.github.issues.lock({
-            ...params,
-            lock_reason: lockReason,
-            headers: {
-              Accept: 'application/vnd.github.sailor-v-preview+json',
-            },
-          })
-        : octokit.github.issues.lock({ ...params })
-    }
-  }
-
   export async function ensureUnlock(
     octokit: ReturnType<typeof getOctokit>,
-    context: Context,
     callback: (() => void) | (() => Promise<any>),
   ) {
+    const context = github.context
     const payload = context.payload.issue || context.payload.pull_request
     if (payload && payload.locked) {
       const params = { ...context.repo, issue_number: payload.number }
-      const lockReason = payload.active_lock_reason as string
+      const lockReason = payload.active_lock_reason as Config.LockReason
       await octokit.issues.unlock({ ...params })
       await callback()
-      await lockIssue(octokit, context, lockReason)
+      await octokit.issues.lock({
+        ...params,
+        lock_reason: lockReason,
+      })
     } else {
       await callback()
     }
+  }
+
+  export async function comment(
+    octokit: ReturnType<typeof getOctokit>,
+    content: string | string[],
+    reactions: string | string[] | undefined,
+    data: any,
+  ) {
+    const context = github.context
+    const payload = (context.payload.issue || context.payload.pull_request)!
+    const params = { ...context.repo, issue_number: payload.number }
+    const body = pickComment(content, {
+      ...data,
+      author: payload.user.login,
+    })
+
+    return ensureUnlock(octokit, async () => {
+      const { data } = await octokit.issues.createComment({
+        ...params,
+        body,
+      })
+
+      if (reactions) {
+        await Reaction.add(octokit, data.id, reactions)
+      }
+    })
+  }
+
+  export async function label(
+    octokit: ReturnType<typeof getOctokit>,
+    labels: string | string[],
+  ) {
+    const labelsToAdd: string[] = []
+    const labelsToRemove: string[] = []
+    const context = github.context
+    const payload = (context.payload.issue || context.payload.pull_request)!
+    const params = { ...context.repo, issue_number: payload.number }
+    const process = (label: string) => {
+      if (label.startsWith('-')) {
+        labelsToRemove.push(label.substr(1))
+      } else {
+        labelsToAdd.push(label)
+      }
+    }
+
+    if (Array.isArray(labels)) {
+      labels.forEach((item) => process(item))
+    } else {
+      process(labels)
+    }
+
+    if (labelsToAdd.length) {
+      octokit.issues.addLabels({ ...params, labels: labelsToAdd })
+    }
+
+    labelsToRemove.forEach((name) => {
+      octokit.issues.removeLabel({ ...params, name })
+    })
+  }
+
+  export async function pin(
+    octokit: ReturnType<typeof getOctokit>,
+    pinned: boolean,
+  ) {
+    // https://developer.github.com/v4/input_object/pinissueinput/
+    const mutation = pinned
+      ? `mutation ($input: PinIssueInput!) {
+          pinIssue(input: $input) {
+            issue {
+              title
+            }
+          }
+        }`
+      : `mutation ($input: UnpinIssueInput!) {
+          unpinIssue(input: $input) {
+            issue {
+              title
+            }
+          }
+        }`
+
+    const context = github.context
+    const payload = (context.payload.issue || context.payload.pull_request)!
+    return octokit.graphql(mutation, {
+      input: {
+        issueId: payload.node_id,
+        clientMutationId: 'top3 pinned',
+      },
+      headers: {
+        Accept: 'application/vnd.github.elektra-preview',
+      },
+    })
   }
 }
