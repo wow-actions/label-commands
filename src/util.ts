@@ -107,27 +107,31 @@ export namespace Util {
     const context = github.context
     const payload = (context.payload.issue || context.payload.pull_request)!
     const params = { ...context.repo, issue_number: payload.number }
-    const process = (label: string) => {
-      if (label.startsWith('-')) {
-        labelsToRemove.push(label.substr(1))
-      } else {
-        labelsToAdd.push(label)
+    const process = (raw: string) => {
+      const handle = (label: string) => {
+        if (label.startsWith('-')) {
+          labelsToRemove.push(label.substr(1))
+        } else {
+          labelsToAdd.push(label)
+        }
+
+        raw.split(/\s+/).forEach(handle)
       }
-    }
 
-    if (Array.isArray(labels)) {
-      labels.forEach((item) => process(item))
-    } else {
-      process(labels)
-    }
+      if (Array.isArray(labels)) {
+        labels.forEach(process)
+      } else {
+        process(labels)
+      }
 
-    if (labelsToAdd.length) {
-      octokit.issues.addLabels({ ...params, labels: labelsToAdd })
-    }
+      if (labelsToAdd.length) {
+        octokit.issues.addLabels({ ...params, labels: labelsToAdd })
+      }
 
-    labelsToRemove.forEach((name) => {
-      octokit.issues.removeLabel({ ...params, name })
-    })
+      labelsToRemove.forEach((name) => {
+        octokit.issues.removeLabel({ ...params, name })
+      })
+    }
   }
 
   export async function pin(

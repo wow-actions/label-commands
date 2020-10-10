@@ -13,7 +13,7 @@ This Github Action performs certain commands when an issue or pull request is la
 - Unlock (`unlock` option)
 - Pin (`pin` option, pin an issue)
 - UnPin (`unpin` option, unpin an issue)
-- Add or remove labels (`labels` option), label prefixed with `-` will be removed, other label will be added.
+- Add or remove labels (`labels` option), label prefixed with `-` will be removed, other label will be added. Support array of labels or space separated labels.
 
 ## Usage
 
