@@ -6,13 +6,19 @@ import { Config } from './config'
 export namespace Action {
   export async function run() {
     try {
+      const context = github.context
+
+      core.debug(`event: ${context.eventName}`)
+      core.debug(`action: ${context.payload.action}`)
+
       if (
         Util.isValidEvent('issues', 'labeled') ||
         Util.isValidEvent('issues', 'unlabeled') ||
+        Util.isValidEvent('pull_request_target', 'labeled') ||
+        Util.isValidEvent('pull_request_target', 'unlabeled') ||
         Util.isValidEvent('pull_request', 'labeled') ||
         Util.isValidEvent('pull_request', 'unlabeled')
       ) {
-        const context = github.context
         const configPath = core.getInput('CONFIG_FILE')
         const octokit = Util.getOctokit()
         const config = await Config.get(octokit, configPath)
