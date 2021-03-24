@@ -1,6 +1,6 @@
 # Label Commands
 
-> Github action to perform commands when issues or pull requests are labeled or unlabeled.
+> Github Action to perform commands when issues or pull requests are labeled or unlabeled.
 
 ## How It Works
 
