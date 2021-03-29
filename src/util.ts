@@ -107,31 +107,40 @@ export namespace Util {
     const context = github.context
     const payload = (context.payload.issue || context.payload.pull_request)!
     const params = { ...context.repo, issue_number: payload.number }
-    const process = (raw: string) => {
-      const handle = (label: string) => {
-        if (label.startsWith('-')) {
-          labelsToRemove.push(label.substr(1))
-        } else {
-          labelsToAdd.push(label)
-        }
 
-        raw.split(/\s+/).forEach(handle)
-      }
-
-      if (Array.isArray(labels)) {
-        labels.forEach(process)
+    const handle = (label: string) => {
+      if (label.startsWith('-')) {
+        labelsToRemove.push(label.substr(1))
       } else {
-        process(labels)
+        labelsToAdd.push(label)
       }
-
-      if (labelsToAdd.length) {
-        octokit.issues.addLabels({ ...params, labels: labelsToAdd })
-      }
-
-      labelsToRemove.forEach((name) => {
-        octokit.issues.removeLabel({ ...params, name })
-      })
     }
+
+    const split = (raw: string) =>
+      raw
+        .split(/[\s\n\r]+/)
+        .map((label) => label.trim())
+        .filter((label) => label.length > 0)
+
+    if (Array.isArray(labels)) {
+      labels.forEach(handle)
+    } else {
+      split(labels).forEach((label) => handle(label))
+    }
+
+    const deferArr: Promise<any>[] = []
+
+    if (labelsToAdd.length) {
+      deferArr.push(
+        octokit.issues.addLabels({ ...params, labels: labelsToAdd }),
+      )
+    }
+
+    labelsToRemove.forEach((name) => {
+      deferArr.push(octokit.issues.removeLabel({ ...params, name }))
+    })
+
+    return Promise.all(deferArr)
   }
 
   export async function pin(
