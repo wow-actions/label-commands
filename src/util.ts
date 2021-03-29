@@ -128,6 +128,9 @@ export namespace Util {
       split(labels).forEach((label) => handle(label))
     }
 
+    core.debug(`labelsToAdd: ${JSON.stringify(labelsToAdd)}`)
+    core.debug(`labelsToRemove: ${JSON.stringify(labelsToRemove)}`)
+
     const deferArr: Promise<any>[] = []
 
     if (labelsToAdd.length) {
