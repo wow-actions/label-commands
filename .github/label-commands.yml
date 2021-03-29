@@ -20,7 +20,7 @@ issues:
     labels:
       - use-idea-board
 
-  feature:
+  -feature:
     open: true
     labels:
       - -use-idea-board
