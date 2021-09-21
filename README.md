@@ -1,6 +1,5 @@
-# Label Commands
-
-> Github action to perform commands when issues or pull requests are labeled or unlabeled.
+<h1 align="center">Label Commands</h1>
+<p align="center"><strong>Perform commands when issues or pull requests are labeled or unlabeled</strong></p>
 
 ## How It Works
 
@@ -30,13 +29,17 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - uses: bubkoo/label-commands@v1
+      - uses: wow-actions/label-commands@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG_FILE: your-config-file-path # .github/label-commands.yml
+          CONFIG_FILE: your-config-file-path # .github/workflows/config/label-commands.yml
 ```
 
-### Options
+### Inputs
+
+Various inputs are defined to let you configure the action:
+
+> Note: [Workflow command and parameter names are not case-sensitive](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#about-workflow-commands).
 
 - `GITHUB_TOKEN`: Your GitHub token for authentication.
 - `CONFIG_FILE`: Path to configuration file. Custom config will [deep merged](https://lodash.com/docs/4.17.15#merge) with the following default config:

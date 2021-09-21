@@ -6,7 +6,7 @@ import { Config } from './config'
 export namespace Action {
   export async function run() {
     try {
-      const context = github.context
+      const { context } = github
 
       core.debug(`event: ${context.eventName}`)
       core.debug(`action: ${context.payload.action}`)
@@ -78,22 +78,22 @@ export namespace Action {
           }
 
           if (open && payload.state === 'closed') {
-            await octokit.issues.update({ ...params, state: 'open' })
+            await octokit.rest.issues.update({ ...params, state: 'open' })
           }
 
           if (close && payload.state === 'open') {
-            await octokit.issues.update({ ...params, state: 'closed' })
+            await octokit.rest.issues.update({ ...params, state: 'closed' })
           }
 
           if (lock && !payload.locked) {
-            await octokit.issues.lock({
+            await octokit.rest.issues.lock({
               ...params,
               lock_reason: lockReason,
             })
           }
 
           if (unlock && payload.locked) {
-            await octokit.issues.unlock({ ...params })
+            await octokit.rest.issues.unlock({ ...params })
           }
 
           if (labels) {
